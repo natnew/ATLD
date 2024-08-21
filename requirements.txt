@@ -3,4 +3,4 @@ requests==2.31.0
 pandas==2.1.1
 numpy==1.26.0
 # Explicitly specify Pillow version compatible with Streamlit
-pillow==9.5.0
+pillow==9.0.0
