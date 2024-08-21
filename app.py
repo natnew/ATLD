@@ -54,4 +54,17 @@ if uploaded_files:
         # Set up headers
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f
+            "Authorization": f"Bearer {GPT4V_KEY}",
+        }
+
+        # Send the request
+        response = requests.post(GPT4V_ENDPOINT, headers=headers, json=payload)
+
+        # Handle the response
+        if response.status_code == 200:
+            json_response = response.json()
+            answer = json_response['choices'][0]['message']['content']
+            # Display the answer in the Streamlit app
+            st.write(f"Response for {uploaded_file.name}: {answer}")
+        else:
+            st.error(f"Failed to get a response for {uploaded_file.name}. Status code: {response.status_code}")
