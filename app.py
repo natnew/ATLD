@@ -3,9 +3,11 @@ import base64
 import requests
 import streamlit as st
 
-# Access the GPT4V_KEY and GPT4V_ENDPOINT from Streamlit secrets
-GPT4V_KEY = st.secrets["GPT4V_KEY"]
-GPT4V_ENDPOINT = st.secrets["GPT4V_ENDPOINT"]
+# Access the OpenAI API key from Streamlit secrets
+OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
+
+# Set the OpenAI API endpoint
+OPENAI_ENDPOINT = "https://api.openai.com/v1/chat/completions"
 
 # Set the page configuration (this sets the page title and icon in the tab)
 st.set_page_config(
@@ -35,30 +37,15 @@ if uploaded_files:
 
         # Construct the payload for the request
         payload = {
+            "model": "gpt-4o-mini",  # Specify the model that supports vision tasks
             "messages": [
                 {
                     "role": "system",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": "You are an AI assistant trained to provide detailed descriptions and interpretations of images. Please provide a comprehensive description based on the visual content."
-                        }
-                    ]
+                    "content": "You are an AI assistant trained to provide detailed descriptions and interpretations of images. Please provide a comprehensive description based on the visual content."
                 },
                 {
                     "role": "user",
-                    "content": [
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": f"data:image/jpeg;base64,{encoded_image}"
-                            }
-                        },
-                        {
-                            "type": "text",
-                            "text": f"For the image provided, write brief alternative text of no more than 150 characters. Do not include a summary. Only describe what is in the image: {uploaded_file.name}"
-                        }
-                    ]
+                    "content": f"For the image provided, write brief alternative text of no more than 150 characters. Do not include a summary. Only describe what is in the image: {uploaded_file.name}"
                 }
             ],
             "temperature": 0.2,
@@ -69,11 +56,11 @@ if uploaded_files:
         # Set up headers
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {GPT4V_KEY}",
+            "Authorization": f"Bearer {OPENAI_API_KEY}",
         }
 
         # Send the request
-        response = requests.post(GPT4V_ENDPOINT, headers=headers, json=payload)
+        response = requests.post(OPENAI_ENDPOINT, headers=headers, json=payload)
 
         # Handle the response
         if response.status_code == 200:
@@ -83,3 +70,4 @@ if uploaded_files:
             st.write(f"Response for {uploaded_file.name}: {answer}")
         else:
             st.error(f"Failed to get a response for {uploaded_file.name}. Status code: {response.status_code}")
+
