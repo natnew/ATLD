@@ -37,7 +37,7 @@ if uploaded_files:
 
         # Construct the payload for the request
         payload = {
-            "model": "gpt-4-vision",  # Specify the model that supports vision tasks
+            "model": "gpt-4o-mini",  # Specify the model that supports vision tasks
             "messages": [
                 {
                     "role": "system",
@@ -45,10 +45,7 @@ if uploaded_files:
                 },
                 {
                     "role": "user",
-                    "content": {
-                        "type": "image",
-                        "image_data": f"data:image/jpeg;base64,{encoded_image}"
-                    }
+                    "content": f"For the image provided, write brief alternative text of no more than 150 characters. Do not include a summary. Only describe what is in the image: {uploaded_file.name}"
                 }
             ],
             "temperature": 0.2,
