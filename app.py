@@ -32,42 +32,56 @@ if uploaded_files:
         # Read the image data
         image_data = uploaded_file.read()
 
-        # Encode the image in base64
-        encoded_image = base64.b64encode(image_data).decode('ascii')
+        # Determine the MIME type based on the file extension
+        file_extension = uploaded_file.name.split(".")[-1].lower()
+        mime_type = f"image/{file_extension}" if file_extension in ["jpg", "jpeg", "png"] else None
 
-        # Construct the payload for the request
-        payload = {
-            "model": "gpt-4o-mini",  # Specify the model that supports vision tasks
-            "messages": [
-                {
-                    "role": "system",
-                    "content": "You are an AI assistant trained to provide detailed descriptions and interpretations of images. Please provide a comprehensive description based on the visual content."
-                },
-                {
-                    "role": "user",
-                    "content": f"For the image provided, write brief alternative text of no more than 150 characters. Do not include a summary. Only describe what is in the image: {uploaded_file.name}"
-                }
-            ],
-            "temperature": 0.2,
-            "top_p": 0.95,
-            "max_tokens": 800
-        }
+        if mime_type:
+            # Encode the image in base64
+            encoded_image = base64.b64encode(image_data).decode('ascii')
 
-        # Set up headers
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {OPENAI_API_KEY}",
-        }
+            # Construct the payload for the request
+            payload = {
+                "model": "gpt-4o-mini",  # Specify the model that supports vision tasks
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "You are an AI assistant trained to provide detailed descriptions and interpretations of images. Please provide a comprehensive description based on the visual content."
+                    },
+                    {
+                        "role": "user",
+                        "content": "For the image provided, write brief alternative text of no more than 150 characters. Do not include a summary. Only describe what is in the image"
+                    },
+                    {
+                        "role": "user",
+                        "content": {
+                            "type": "image",
+                            "image_data": f"data:{mime_type};base64,{encoded_image}"
+                        }
+                    }
+                ],
+                "temperature": 0.2,
+                "top_p": 0.95,
+                "max_tokens": 800
+            }
 
-        # Send the request
-        response = requests.post(OPENAI_ENDPOINT, headers=headers, json=payload)
+            # Set up headers
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {OPENAI_API_KEY}",
+            }
 
-        # Handle the response
-        if response.status_code == 200:
-            json_response = response.json()
-            answer = json_response['choices'][0]['message']['content']
-            # Display the answer in the Streamlit app
-            st.write(f"Response for {uploaded_file.name}: {answer}")
+            # Send the request
+            response = requests.post(OPENAI_ENDPOINT, headers=headers, json=payload)
+
+            # Handle the response
+            if response.status_code == 200:
+                json_response = response.json()
+                answer = json_response['choices'][0]['message']['content']
+                # Display the answer in the Streamlit app
+                st.write(f"Response for {uploaded_file.name}: {answer}")
+            else:
+                st.error(f"Failed to get a response for {uploaded_file.name}. Status code: {response.status_code}")
         else:
-            st.error(f"Failed to get a response for {uploaded_file.name}. Status code: {response.status_code}")
+            st.error(f"Unsupported file type for {uploaded_file.name}.")
 
