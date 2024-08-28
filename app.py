@@ -19,9 +19,7 @@ st.set_page_config(
 st.title("AI-Driven Alternative Text and Long Descriptions (ATLD) Generator")
 
 st.markdown("""
-**Description**: The purpose of this application is to develop and implement a solution for generating alternative text and long descriptions (ATLD) for images in non-journal content. Our current reliance on multiple third-party vendors results in inconsistent quality and high costs. By leveraging AI-generated ATLD, this solution aims to streamline the process and ensure consistency across our publication titles.
-
-This tool focuses on enabling AI-generated ATLD at scale, supporting batch uploads of chapters or entire books with associated images. The output format is editable, preferably in MS Word, to facilitate further editing by our editorial team. Ultimately, the goal is to integrate this solution into our existing manuscript and image management system, optimizing workflow efficiency and reducing costs. While AI-generated ATLD provides a preliminary draft, it will still require additional editorial effort to achieve publishable quality, addressing the uncertainty in ROI.
+**Description**: The purpose of this application is to develop and implement a solution for generating alternative text and long descriptions (ATLD) for images in non-journal content. 
 """)
 
 # Streamlit UI for file upload
